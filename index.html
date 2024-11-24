@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Table Form</title>
+    <link rel="stylesheet" href="index.css".css">
+</head>
+
+<body>
+    <center>
+        <h1>SmartTable</h1>
+    </center>
+
+    <div class="container">
+        <input type="text" placeholder="Enter Your Name" id="name" autocomplete="off">
+        <input type="text" placeholder="Enter Your Surname" id="surname" autocomplete="off">
+        <input type="email" placeholder="Enter Your Email" id="emails" autocomplete="off">
+        <button id="btn" class="btn">Submit</button>
+    </div>
+
+    <div class="sort-buttons" id="sort-buttons"></div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Dynamic rows will be inserted here -->
+        </tbody>
+    </table>
+
+    <button id="export-btn" class="btn" style="margin-top: 20px;">Export as CSV</button>
+
+    <script src="index.js"></script>
+
+</body>
+
+</html>
