@@ -247,18 +247,16 @@ const firstName = document.getElementById('name');
                         cells[2].textContent  // Email
                     ];
                 })
-            ];
-
-            // Convert array of rows into CSV string
+            ];         // Convert array of rows into CSV string
             const csvString = csvContent.map(row => row.join(',')).join('\n');
 
             // Create a Blob with CSV data
             const blob = new Blob([csvString], { type: 'text/csv' });
-
+            const csvName = prompt('Your File name to be saved');
             // Create a download link for the CSV file
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = 'tableData.csv'; // Set the filename for the CSV
+            link.download = `${csvName}.csv`; // Set the filename for the CSV
 
             // Trigger the download
             link.click();
