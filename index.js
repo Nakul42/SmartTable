@@ -1,73 +1,73 @@
 const firstName = document.getElementById('name');
-        const surName = document.getElementById('surname');
-        const emailInput = document.getElementById('emails'); // Consistent variable naming
-        const submitButton = document.getElementById('btn');
-        const tableBody = document.querySelector('.table tbody');
+const surName = document.getElementById('surname');
+const emailInput = document.getElementById('emails'); // Consistent variable naming
+const submitButton = document.getElementById('btn');
+const tableBody = document.querySelector('.table tbody');
 
-        // Validate email
-        const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+// Validate email
+const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-        // Validate name and surname (only alphabets allowed)
-        const validateText = (text) => /^[a-zA-Z\s]+$/.test(text.trim());
+// Validate name and surname (only alphabets allowed)
+const validateText = (text) => /^[a-zA-Z\s]+$/.test(text.trim());
 
-        // Check and display "No data available" if table is empty
-        const checkEmptyTable = () => {
-            if (tableBody.children.length === 0) {
-                const emptyRow = document.createElement('tr');
-                emptyRow.classList.add('empty-row');
-                emptyRow.innerHTML = `<td colspan="4" style="text-align:center;">No data available</td>`;
-                tableBody.appendChild(emptyRow);
-            }
+// Check and display "No data available" if table is empty
+const checkEmptyTable = () => {
+    if (tableBody.children.length === 0) {
+        const emptyRow = document.createElement('tr');
+        emptyRow.classList.add('empty-row');
+        emptyRow.innerHTML = `<td colspan="4" style="text-align:center;">No data available</td>`;
+        tableBody.appendChild(emptyRow);
+    }
+};
+
+// Remove "No data available" row
+const removeEmptyRow = () => {
+    const emptyRow = document.querySelector('.empty-row');
+    if (emptyRow) emptyRow.remove();
+};
+
+// Save table data to localStorage
+const saveTableData = () => {
+    const rows = Array.from(tableBody.children);
+    const tableData = rows.map((row) => {
+        const cells = row.querySelectorAll('td');
+        return {
+            name: cells[0].textContent,
+            surname: cells[1].textContent,
+            email: cells[2].textContent,
         };
-
-        // Remove "No data available" row
-        const removeEmptyRow = () => {
-            const emptyRow = document.querySelector('.empty-row');
-            if (emptyRow) emptyRow.remove();
-        };
-
-        // Save table data to localStorage
-        const saveTableData = () => {
-            const rows = Array.from(tableBody.children);
-            const tableData = rows.map((row) => {
-                const cells = row.querySelectorAll('td');
-                return {
-                    name: cells[0].textContent,
-                    surname: cells[1].textContent,
-                    email: cells[2].textContent,
-                };
-            });
-            localStorage.setItem('tableData', JSON.stringify(tableData));
-        };
+    });
+    localStorage.setItem('tableData', JSON.stringify(tableData));
+};
 
 
-        // Load table data from localStorage
-        const loadTableData = () => {
-            const savedData = localStorage.getItem('tableData');
-            if (savedData) {
-                const tableData = JSON.parse(savedData);
-                tableData.forEach(({ name, surname, email }) => addRow(name, surname, email));
-            }
-            checkEmptyTable();
-        };
+// Load table data from localStorage
+const loadTableData = () => {
+    const savedData = localStorage.getItem('tableData');
+    if (savedData) {
+        const tableData = JSON.parse(savedData);
+        tableData.forEach(({ name, surname, email }) => addRow(name, surname, email));
+    }
+    checkEmptyTable();
+};
 
-        const isDuplicateEmail = (email) => {
-            const rows = Array.from(tableBody.children);
-            return rows.some(row => row.children[2].textContent === email);
-        };
+const isDuplicateEmail = (email) => {
+    const rows = Array.from(tableBody.children);
+    return rows.some(row => row.children[2].textContent === email);
+};
 
-        // Add a new row
-        const addRow = (name, surname, email) => {
-            removeEmptyRow();
+// Add a new row
+const addRow = (name, surname, email) => {
+    removeEmptyRow();
 
-            if (isDuplicateEmail(email)) {
-                alert('This email is already added!');
-                return;
-            }
+    if (isDuplicateEmail(email)) {
+        alert('This email is already added!');
+        return;
+    }
 
-            const newRow = document.createElement('tr');
+    const newRow = document.createElement('tr');
 
-            newRow.innerHTML = `
+    newRow.innerHTML = `
         <td>${name}</td>
         <td>${surname}</td>
         <td>${email}</td>
@@ -77,197 +77,209 @@ const firstName = document.getElementById('name');
         </td>
     `;
 
-            const editButton = newRow.querySelector('.edit-btn');
-            const deleteButton = newRow.querySelector('.delete-btn');
+    const editButton = newRow.querySelector('.edit-btn');
+    const deleteButton = newRow.querySelector('.delete-btn');
 
-            editButton.addEventListener('click', () => {
+    editButton.addEventListener('click', () => {
 
-                if (firstName.value.trim() !== '' && surName.value.trim() !== '' && emailInput.value.trim() !== '') {
-                    alert('Already One Data is being edited. Please complete it first.');
-                } else {
-                    firstName.value = name;
-                    surName.value = surname;
-                    emailInput.value = email;
-                    newRow.remove();
-                    saveTableData();
-                    checkEmptyTable();
-
-                    name = '';
-                    surname = '';
-                    email = '';
-                }
-            });
-
-            deleteButton.addEventListener('click', () => {
-                if (confirm('Are you sure you want to delete this row?')) {
-                    newRow.remove();
-                    saveTableData();
-                    checkEmptyTable();
-                }
-            });
-
-            tableBody.appendChild(newRow);
+        if (firstName.value.trim() !== '' && surName.value.trim() !== '' && emailInput.value.trim() !== '') {
+            alert('Already One Data is being edited. Please complete it first.');
+        } else {
+            firstName.value = name;
+            surName.value = surname;
+            emailInput.value = email;
+            newRow.remove();
             saveTableData();
-        };
+            checkEmptyTable();
 
-        // Handle form submission
-        const handleSubmit = () => {
-            const name = firstName.value.trim();
-            const surname = surName.value.trim();
-            const emailValue = emailInput.value.trim();
+            name = '';
+            surname = '';
+            email = '';
+        }
+    });
 
-            if (name === '' && surname === '' && emailValue === '') {
-                alert('Name, Surname, and Email cannot be empty');
-                return;
-            } else if (!validateText(name) || !validateText(surname)) {
-                alert('Name and Surname must only contain alphabets.');
-                return;
-            } else if (!validateEmail(emailValue)) {
-                alert('Please enter a valid email address.');
-                return;
-            }
-
-            addRow(name, surname, emailValue);
-
-            firstName.value = '';
-            surName.value = '';
-            emailInput.value = '';
+    deleteButton.addEventListener('click', () => {
+        if (confirm('Are you sure you want to delete this row?')) {
+            newRow.remove();
             saveTableData();
-        };
+            checkEmptyTable();
+        }
+    });
 
-        // Sort table rows by name
-        const sortByName = () => {
-            const rows = Array.from(tableBody.querySelectorAll('tr'));
-            const sortedRows = rows.sort((a, b) => {
-                const nameA = a.children[0].textContent.toLowerCase();
-                const nameB = b.children[0].textContent.toLowerCase();
-                return nameA.localeCompare(nameB);
-            });
+    tableBody.appendChild(newRow);
+    saveTableData();
+};
 
-            tableBody.innerHTML = '';
-            sortedRows.forEach((row) => tableBody.appendChild(row));
-            saveTableData();
-        };
+// Handle form submission
+const handleSubmit = () => {
+    const name = firstName.value.trim();
+    const surname = surName.value.trim();
+    const emailValue = emailInput.value.trim();
 
-        // Sort table rows by surname
-        const sortBySurname = () => {
-            const rows = Array.from(tableBody.querySelectorAll('tr'));
-            const sortedRows = rows.sort((a, b) => {
-                const surnameA = a.children[1].textContent.toLowerCase();
-                const surnameB = b.children[1].textContent.toLowerCase();
-                return surnameA.localeCompare(surnameB);
-            });
+    if (name === '' && surname === '' && emailValue === '') {
+        alert('Name, Surname, and Email cannot be empty');
+        return;
+    } else if (!validateText(name) || !validateText(surname)) {
+        alert('Name and Surname must only contain alphabets.');
+        return;
+    } else if (!validateEmail(emailValue)) {
+        alert('Please enter a valid email address.');
+        return;
+    }
 
-            tableBody.innerHTML = '';
-            sortedRows.forEach((row) => tableBody.appendChild(row));
-            saveTableData();
-        };
+    addRow(name, surname, emailValue);
 
-        // Sort table rows by email
-        const sortByEmail = () => {
-            const rows = Array.from(tableBody.querySelectorAll('tr'));
-            const sortedRows = rows.sort((a, b) => {
-                const emailA = a.children[2].textContent.toLowerCase();
-                const emailB = b.children[2].textContent.toLowerCase();
-                return emailA.localeCompare(emailB);
-            });
+    firstName.value = '';
+    surName.value = '';
+    emailInput.value = '';
+    saveTableData();
+};
 
-            tableBody.innerHTML = '';
-            sortedRows.forEach((row) => tableBody.appendChild(row));
-            saveTableData();
-        };
+// Sort table rows by name
+const sortByName = () => {
+    const rows = Array.from(tableBody.querySelectorAll('tr'));
+    const sortedRows = rows.sort((a, b) => {
+        const nameA = a.children[0].textContent.toLowerCase();
+        const nameB = b.children[0].textContent.toLowerCase();
+        return nameA.localeCompare(nameB);
+    });
 
-        const sortByColumn = (columnIndex, key) => {
-            const rows = Array.from(tableBody.querySelectorAll('tr'));
-            const sortedRows = rows.sort((a, b) => {
-                const textA = a.children[columnIndex].textContent.toLowerCase();
-                const textB = b.children[columnIndex].textContent.toLowerCase();
-                if (sortDirections[key]) {
-                    return textA.localeCompare(textB);
-                } else {
-                    return textB.localeCompare(textA);
-                }
-            });
+    tableBody.innerHTML = '';
+    sortedRows.forEach((row) => tableBody.appendChild(row));
+    saveTableData();
+};
 
-            sortDirections[key] = !sortDirections[key]; // Toggle sort direction
+// Sort table rows by surname
+const sortBySurname = () => {
+    const rows = Array.from(tableBody.querySelectorAll('tr'));
+    const sortedRows = rows.sort((a, b) => {
+        const surnameA = a.children[1].textContent.toLowerCase();
+        const surnameB = b.children[1].textContent.toLowerCase();
+        return surnameA.localeCompare(surnameB);
+    });
 
-            tableBody.innerHTML = '';
-            sortedRows.forEach(row => tableBody.appendChild(row));
-            saveTableData();
+    tableBody.innerHTML = '';
+    sortedRows.forEach((row) => tableBody.appendChild(row));
+    saveTableData();
+};
 
-            // Update header classes
-            const headers = document.querySelectorAll('th');
-            headers.forEach((th, index) => {
-                th.classList.remove('sorted-asc', 'sorted-desc');
-                if (index === columnIndex) {
-                    th.classList.add(sortDirections[key] ? 'sorted-asc' : 'sorted-desc');
-                }
-            });
-        };
+// Sort table rows by email
+const sortByEmail = () => {
+    const rows = Array.from(tableBody.querySelectorAll('tr'));
+    const sortedRows = rows.sort((a, b) => {
+        const emailA = a.children[2].textContent.toLowerCase();
+        const emailB = b.children[2].textContent.toLowerCase();
+        return emailA.localeCompare(emailB);
+    });
 
-        // Attach event listeners to sort buttons
-        const sortDiv = document.getElementById('sort-buttons');
-        sortDiv.innerHTML = `
+    tableBody.innerHTML = '';
+    sortedRows.forEach((row) => tableBody.appendChild(row));
+    saveTableData();
+};
+
+const sortByColumn = (columnIndex, key) => {
+    const rows = Array.from(tableBody.querySelectorAll('tr'));
+    const sortedRows = rows.sort((a, b) => {
+        const textA = a.children[columnIndex].textContent.toLowerCase();
+        const textB = b.children[columnIndex].textContent.toLowerCase();
+        if (sortDirections[key]) {
+            return textA.localeCompare(textB);
+        } else {
+            return textB.localeCompare(textA);
+        }
+    });
+
+    sortDirections[key] = !sortDirections[key]; // Toggle sort direction
+
+    tableBody.innerHTML = '';
+    sortedRows.forEach(row => tableBody.appendChild(row));
+    saveTableData();
+
+    // Update header classes
+    const headers = document.querySelectorAll('th');
+    headers.forEach((th, index) => {
+        th.classList.remove('sorted-asc', 'sorted-desc');
+        if (index === columnIndex) {
+            th.classList.add(sortDirections[key] ? 'sorted-asc' : 'sorted-desc');
+        }
+    });
+};
+
+// Attach event listeners to sort buttons
+const sortDiv = document.getElementById('sort-buttons');
+sortDiv.innerHTML = `
     <button id="sort-by-name" class="sort-btn">Sort by Name</button>
     <button id="sort-by-surname" class="sort-btn">Sort by Surname</button>
     <button id="sort-by-email" class="sort-btn">Sort by Email</button>
 `;
-        document.getElementById('sort-by-name').addEventListener('click', sortByName);
-        document.getElementById('sort-by-surname').addEventListener('click', sortBySurname);
-        document.getElementById('sort-by-email').addEventListener('click', sortByEmail);
+document.getElementById('sort-by-name').addEventListener('click', sortByName);
+document.getElementById('sort-by-surname').addEventListener('click', sortBySurname);
+document.getElementById('sort-by-email').addEventListener('click', sortByEmail);
 
-        // Add event listener for the submit button
-        submitButton.addEventListener('click', handleSubmit);
+// Add event listener for the submit button
+submitButton.addEventListener('click', handleSubmit);
 
-        // Handle form submission on Enter key press
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                handleSubmit();
-            }
-        });
+// Handle form submission on Enter key press
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        handleSubmit();
+    }
+});
 
-        // Implement CSV export functionality
-        const exportButton = document.getElementById('export-btn');
+// Implement CSV export functionality
+const exportButton = document.getElementById('export-btn');
 
-        const exportToCSV = () => {
-            const rows = Array.from(tableBody.querySelectorAll('tr'));
-            if (rows.length === 0) {
-                alert('No data to export.');
-                return;
-            }
+const exportToCSV = () => {
+    const rows = Array.from(tableBody.querySelectorAll('tr'));
+    if (rows.length === 0) {
+        alert('No data to export.');
+        return;
+    }
 
-            const csvContent = [
-                ['Name', 'Surname', 'Email'], // Table headers
-                ...rows.map(row => {
-                    const cells = row.querySelectorAll('td');
-                    return [
-                        cells[0].textContent, // Name
-                        cells[1].textContent, // Surname
-                        cells[2].textContent  // Email
-                    ];
-                })
-            ];         // Convert array of rows into CSV string
-            const csvString = csvContent.map(row => row.join(',')).join('\n');
+    // Generate CSV content
+    const csvContent = [
+        ['Name', 'Surname', 'Email'], // Table headers
+        ...rows.map(row => {
+            const cells = row.querySelectorAll('td');
+            return [
+                cells[0]?.textContent.trim(), // Name
+                cells[1]?.textContent.trim(), // Surname
+                cells[2]?.textContent.trim()  // Email
+            ];
+        })
+    ];
+    const csvString = csvContent.map(row => row.join(',')).join('\n');
 
-            // Create a Blob with CSV data
-            const blob = new Blob([csvString], { type: 'text/csv' });
-            const csvName = prompt('Your File name to be saved');
-            // Create a download link for the CSV file
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `${csvName}.csv`; // Set the filename for the CSV
+    // Prompt for the filename
+    let csvName;
+    do {
+        csvName = prompt('Enter a name for your file:');
+        if (csvName === null) return; // Cancel clicked, exit function
+        if (!csvName.trim()) {
+            alert('File name cannot be empty.');
+        }
+    } while (!csvName.trim()); 
 
-            // Trigger the download
-            link.click();
-        };
+    // Create a Blob with CSV data
+    const blob = new Blob([csvString], { type: 'text/csv' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${csvName}.csv`; // Set the filename for the CSV
 
-        // Add event listener to export button
-        exportButton.addEventListener('click', exportToCSV);
+    // Trigger the download
+    link.click();
+
+    // Clean up the object URL
+    URL.revokeObjectURL(link.href);
+};
+
+// Add event listener to export button
+exportButton.addEventListener('click', exportToCSV);
 
 
-        // Initialize table with saved data
-        window.addEventListener('load', loadTableData);
+// Initialize table with saved data
+window.addEventListener('load', loadTableData);
 
-        // Check if the table is empty on load
-        checkEmptyTable();
+// Check if the table is empty on load
+checkEmptyTable();
