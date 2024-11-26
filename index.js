@@ -227,6 +227,24 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
+//Delete all rows if clicked 
+const delteAll = document.getElementById('delete-all');;
+
+
+const deleteAllRows = () => {
+    if (confirm('Are you sure you want to delete all rows?')) {
+
+        tableBody.innerHTML = '';
+
+        
+        saveTableData();
+
+        
+        checkEmptyTable();
+    }
+};
+
+delteAll.addEventListener('click', deleteAllRows);
 // Implement CSV export functionality
 const exportButton = document.getElementById('export-btn');
 
