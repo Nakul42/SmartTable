@@ -232,7 +232,13 @@ const delteAll = document.getElementById('delete-all');;
 
 
 const deleteAllRows = () => {
-    if (confirm('Are you sure you want to delete all rows?')) {
+
+    const emptyRow1 = document.querySelector('.empty-row');
+
+    if (tableBody.children.length === 1 && document.querySelector('.empty-row')) {
+        alert('No data to delete.');
+    } 
+    else if(confirm('Are you sure you want to delete all rows?')) {
 
         tableBody.innerHTML = '';
 
